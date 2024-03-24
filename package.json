@@ -1,0 +1,30 @@
+{
+  "name": "trpa",
+  "version": "0.1.0",
+  "description": "A modern alternative to RPC, with full type safety.",
+  "exports": {
+    "server": "./src/server.ts",
+    "client": "./src/client.ts"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tr1ckydev/tRPA.git"
+  },
+  "keywords": [
+    "rpa",
+    "rpc",
+    "ipc"
+  ],
+  "author": "tr1ckydev",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tr1ckydev/tRPA/issues"
+  },
+  "homepage": "https://github.com/tr1ckydev/tRPA#readme",
+  "devDependencies": {
+    "@types/bun": "latest"
+  }
+}
