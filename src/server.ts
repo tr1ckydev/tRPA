@@ -1,4 +1,3 @@
-import { basename } from "node:path/posix";
 import type { DecodeStrategy } from "./index.ts";
 
 interface ServerConfig {
@@ -6,23 +5,21 @@ interface ServerConfig {
     request: Request;
 }
 
-export async function exportToClient(config: ServerConfig): Promise<Response> {
+export async function exportToClient(config: ServerConfig) {
     const url = new URL(config.request.url);
-    switch (basename(url.pathname)) {
-        case "exports": {
-            return new Response(JSON.stringify(getAll(config.exports)));
+    switch (url.pathname) {
+        case "/trpa/exports": {
+            return Response.json(toExported(config.exports));
         }
-        case "access": {
+        case "/trpa/access": {
             const accessors = url.searchParams.get("accessors")!;
-            let value = access(config.exports, accessors.split(","));
+            const value = access(config.exports, accessors.split(","));
             return encodeResponse(value);
         }
-        case "execute": {
+        case "/trpa/execute": {
             const accessors = url.searchParams.get("accessors")!.split(",");
             const args = JSON.parse(url.searchParams.get("args")!);
-            const decode_strategy = config.request.headers.get(
-                "Decode-Strategy",
-            ) as DecodeStrategy;
+            const decode_strategy = config.request.headers.get("Decode-Strategy") as DecodeStrategy;
             let value = access(config.exports, accessors);
             value = decode_strategy
                 ? await value(await config.request[decode_strategy](), ...args)
@@ -30,22 +27,18 @@ export async function exportToClient(config: ServerConfig): Promise<Response> {
             return encodeResponse(value);
         }
         default:
-            return new Response("error: unknown route " + url.pathname, {
-                status: 404,
-            });
+            return new Response("error: unknown route " + url.pathname, { status: 404 });
     }
 }
 
 function encodeResponse(value: any) {
-    if (typeof value === "object" && "decode_strategy" in value) {
-        return new Response(value.body, {
-            headers: { "Decode-Strategy": value.decode_strategy },
-        });
+    if (value.decode_strategy) {
+        return new Response(value.body, { headers: { "Decode-Strategy": value.decode_strategy } });
     }
-    return new Response(JSON.stringify({ value }));
+    return Response.json({ value });
 }
 
-function getAll(props: Record<string, any>) {
+function toExported(props: Record<string, any>) {
     const types: Record<string, any> = {};
     for (const key in props) {
         const val = props[key];
@@ -55,8 +48,8 @@ function getAll(props: Record<string, any>) {
                 break;
             // @ts-ignore
             case "object":
-                if (!Array.isArray(val) && val !== null && !("decode_strategy" in val)) {
-                    types[key] = getAll(props[key]);
+                if (!Array.isArray(val) && val !== null && !(val.decode_strategy)) {
+                    types[key] = toExported(val);
                     break;
                 }
             default:
@@ -69,12 +62,6 @@ function getAll(props: Record<string, any>) {
 function access(obj: any, accessors: string[]) {
     for (const accessor of accessors) obj = obj[accessor];
     return obj;
-}
-
-export function legacy(res: any, response: Response) {
-    const decode_strategy = response.headers.get("Decode-Strategy");
-    if (decode_strategy) res.setHeader("Decode-Strategy", decode_strategy);
-    res.send(response.body);
 }
 
 export { asBody } from "./index.ts";

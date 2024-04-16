@@ -1,14 +1,14 @@
 {
   "name": "trpa",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A modern alternative to RPC, with full type safety.",
   "exports": {
-    "server": "./src/server.ts",
-    "client": "./src/client.ts"
+    "./server": "./src/server.ts",
+    "./client": "./src/client.ts"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "files": [
+    "src/"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tr1ckydev/tRPA.git"

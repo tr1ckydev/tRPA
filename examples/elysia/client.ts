@@ -6,4 +6,4 @@ const server = await importFromServer<Exports>({
     host: "http://localhost:3000"
 });
 
-console.log(await server.sayHi("Bun"));
+console.log(await server.sayHi("Elysia"));

@@ -9,7 +9,6 @@ const exports = {
 
 export type Exports = typeof exports;
 
-
 Bun.serve({
     fetch(request) {
         return exportToClient({ exports, request });

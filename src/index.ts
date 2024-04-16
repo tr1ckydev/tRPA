@@ -1,9 +1,7 @@
 /**
- * Encode a value to be sent as Request body.
+ * Encode a value to be sent as {@link Request} or {@link Response} body.
  */
-export function asBody<
-    T extends ArrayBuffer | Blob | FormData | string | Record<string, any>,
->(body: T) {
+export function asBody<T extends ArrayBuffer | Blob | FormData | string | Record<string, any>>(body: T) {
     const encoded: { decode_strategy?: string; body: any; } = { body };
     switch (typeof body) {
         case "string":

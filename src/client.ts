@@ -1,4 +1,4 @@
-import { type DecodeStrategy } from "./index.ts";
+import type { DecodeStrategy } from "./index.ts";
 
 type Promisify<T> = {
     [K in keyof T]: T[K] extends (...args: infer Args) => any
@@ -9,7 +9,7 @@ type Promisify<T> = {
 };
 
 interface ClientConfig {
-    host: string;
+    host?: string;
 }
 
 export async function importFromServer<T>(config?: ClientConfig) {
